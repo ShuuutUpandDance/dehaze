@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from dark_channel import get_dark_channel, get_gb_dark_channel
-from util import rearrange_with_lower_bound, safe_add, safe_matrix_subtract, safe_matrix_divide, safe_subtract
+from util import rearrange_with_lower_bound, safe_check, safe_add, safe_matrix_subtract, safe_matrix_divide, safe_subtract
 import cv2
 import numpy as np
 from bg_light import get_bg_light_hemethod
@@ -9,14 +9,15 @@ from queue import PriorityQueue
 from point import Point
 
 # img = cv2.imread('uw_pic/uw7.jpg')
-img = cv2.imread('fish_uw_pic/fish_uw5.jpg')
+# img = cv2.imread('fish_uw_pic/fish_uw5.jpg')
+img = cv2.imread('fish/fish9.jpg')
 
-filename = 'fish_uw5_' + 'he_enhanced.jpg'
+filename = 'fish9_' + 'he_enhanced.jpg'
 
 height = img.shape[0]
 width = img.shape[1]
 
-brightest_points_in_dc = get_bg_light_hemethod(img, radius=15, isUW=True)
+brightest_points_in_dc = get_bg_light_hemethod(img, radius=7, isUW=True)
 pq = PriorityQueue()
 for i in range(len(brightest_points_in_dc)):
     point_in_dc = brightest_points_in_dc[i]
@@ -43,7 +44,7 @@ img_g = img[:, :, 1]
 img_r = img[:, :, 2]
 
 norm_img = np.divide(img.astype(np.int32), bg_light_vector)
-dc = get_gb_dark_channel(norm_img, 10)
+dc = get_gb_dark_channel(norm_img, 7)
 
 t = 1 - dc
 t = cv2.bilateralFilter(t.astype(np.float32), 5, 75, 75)
@@ -51,11 +52,15 @@ lower_bound_for_trans = 0.1
 t = rearrange_with_lower_bound(t, lower_bound_for_trans)
 # print(t)
 # print('=================')
-j_r = safe_matrix_divide(safe_matrix_subtract(img_r, bg_light_vector * dc), t)
-# j_g = safe_matrix_divide(safe_matrix_subtract(img_g, bg_light_vector * dc), t)
-# j_b = safe_matrix_divide(safe_matrix_subtract(img_b, bg_light_vector * dc), t)
-j_g = safe_add(safe_matrix_divide(img_g - bg_light_vector, t), bg_light_vector)
-j_b = safe_add(safe_matrix_divide(img_b - bg_light_vector, t), bg_light_vector)
+
+j_r = safe_check((img_r - bg_light_vector) / t + bg_light_vector)
+j_g = safe_check((img_g - bg_light_vector) / t + bg_light_vector)
+j_b = safe_check((img_b - bg_light_vector) / t + bg_light_vector)
+# j_r = safe_matrix_divide(safe_matrix_subtract(img_r, bg_light_vector * dc), t)
+# # j_g = safe_matrix_divide(safe_matrix_subtract(img_g, bg_light_vector * dc), t)
+# # j_b = safe_matrix_divide(safe_matrix_subtract(img_b, bg_light_vector * dc), t)
+# j_g = safe_add(safe_matrix_divide(img_g - bg_light_vector, t), bg_light_vector)
+# j_b = safe_add(safe_matrix_divide(img_b - bg_light_vector, t), bg_light_vector)
 # print(j_b)
 # print('=================')
 

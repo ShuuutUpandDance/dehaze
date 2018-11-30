@@ -24,7 +24,17 @@ def safe_subtract(matrix, subtractor):
             if subtractor > matrix[i, j]:
                 matrix[i, j] = 0
             else:
-                matrix[i, j] = matrix[i, j] - subtractor
+                matrix[i, j] -= subtractor
+    return matrix
+
+
+def safe_check(matrix):
+    for i in range(len(matrix)):
+        for j in range(len(matrix[0])):
+            if matrix[i, j] > 255:
+                matrix[i, j] = 255
+            if matrix[i, j] < 0:
+                matrix[i, j] = 0
     return matrix
 
 

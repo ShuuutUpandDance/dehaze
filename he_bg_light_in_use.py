@@ -7,9 +7,11 @@ from point import Point
 
 # img = cv2.imread('haze_pic/haze1.jpg')
 # img = cv2.imread('uw_pic/uw6.jpg')
-img = cv2.imread('fish_uw_pic/fish_uw2.jpg')
+# img = cv2.imread('fish_uw_pic/fish_uw2.jpg')
+img = cv2.imread('fish/fish7.jpg')
+filename = 'fish7_he_bglight_exact' + ".jpg"
 
-brightest_points_in_dc = get_bg_light_hemethod(img, radius=15, isUW=True)
+brightest_points_in_dc = get_bg_light_hemethod(img, radius=7, isUW=True)
 
 # paint the area
 # for i in range(len(brightest_points_in_dc)):
@@ -31,9 +33,7 @@ for i in range(len(brightest_points_in_dc)):
     pq.put(point_in_img)
 
 brightest_point_in_img = pq.get()
-cv2.circle(img, (brightest_point_in_img.y, brightest_point_in_img.x), 10, (0, 0, 255), 7)
-
-filename = 'fish_uw2_he_bglight_exact' + ".jpg"
+cv2.circle(img, (brightest_point_in_img.y, brightest_point_in_img.x), 15, (0, 0, 255), 7)
 
 cv2.imshow('a', img)
 cv2.waitKey(0)
